@@ -16,6 +16,6 @@ public class PastaFragment extends ListFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(inflater.getContext(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.pasta));
         setListAdapter(adapter);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pasta, container, false);
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }
