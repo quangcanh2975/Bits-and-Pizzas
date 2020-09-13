@@ -24,11 +24,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String EXTRA_POSITION = "position";
     private ShareActionProvider mShareActionProvider;
     private String[] titles;
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private static int position;
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectItem(int position) {
         Fragment fragment;
+        MainActivity.position = position;
         switch (position) {
             case 1:
                 fragment = new PizzaFragment();
@@ -84,18 +87,30 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(drawerList);
     }
 
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            outState.putInt(EXTRA_POSITION, MainActivity.position);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         titles = getResources().getStringArray(R.array.titles);
-        drawerList = (ListView) findViewById(android.R.id.list);
+        drawerList = (ListView) findViewById(R.id.drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, titles));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (savedInstanceState == null) {
             selectItem(0);
-
+        } else {
+            int oldPosition = savedInstanceState.getInt(EXTRA_POSITION);
+            selectItem(oldPosition);
         }
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer) {
