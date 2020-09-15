@@ -20,6 +20,7 @@ import androidx.appcompat.widget.ShareActionProvider;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private static int position;
+    private int position = 0;
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectItem(int position) {
         Fragment fragment;
-        MainActivity.position = position;
+        this.position = position;
         switch (position) {
             case 1:
                 fragment = new PizzaFragment();
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
+        ft.replace(R.id.content_frame, fragment, "visible_fragment");
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
@@ -91,10 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            outState.putInt(EXTRA_POSITION, MainActivity.position);
-        }
+        outState.putInt(EXTRA_POSITION, position);
     }
 
     @Override
@@ -130,10 +128,27 @@ public class MainActivity extends AppCompatActivity {
 //        drawerToggle.setDrawerIndicatorEnabled(false);
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setLogo(R.drawable.ic_baseline_menu_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+
+        // Configure when use the back stack
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                FragmentManager fragman = getSupportFragmentManager();
+                Fragment fragment = fragman.findFragmentByTag("visible_fragment");
+                if (fragment instanceof TopFragment) {
+                    position = 0;
+                } else if (fragment instanceof PizzaFragment) {
+                    position = 1;
+                } else if (fragment instanceof PastaFragment) {
+                    position = 2;
+                } else if (fragment instanceof StoresFragment) {
+                    position = 3;
+                }
+                setActionBarTitle(position);
+                drawerList.setItemChecked(position, true);
+            }
+        });
     }
 
     @Override
