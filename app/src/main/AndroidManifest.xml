@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
         <activity
+            android:name=".PizzaDetailActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".OrderActivity"
             android:parentActivityName=".MainActivity">
             <meta-data

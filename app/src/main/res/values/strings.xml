@@ -31,4 +31,6 @@
 
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
+    <string name="image_of_pizza">Image of Pizza</string>
+    <string name="pizza_image">Pizza\'s Image</string>
 </resources>
